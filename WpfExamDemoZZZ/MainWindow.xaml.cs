@@ -29,52 +29,52 @@ namespace WpfExamDemoZZZ
             client.BaseAddress = new Uri("http://localhost:5185/api/");
         }
 
-        private async void SignInClick(object sender, RoutedEventArgs e)
+        private async Task SignInClick(object sender, RoutedEventArgs e)
         {
             User.Password = password.Password;
 
-            var responce = await client.PostAsync("User/GetAllUser", new StringContent("{}", Encoding.UTF8, "application/json"));
-            var responce2 = await client.PostAsync("User/GetAllRole", new StringContent("{}", Encoding.UTF8, "application/json"));
-            Users = await responce.Content.ReadFromJsonAsync<List<User>>();
-            Roles = await responce2.Content.ReadFromJsonAsync<List<Role>>();
-            var user = Users.FirstOrDefault(s => s.Login == User.Login && s.Password == User.Password);
+            var responce = await client.PostAsync("User/CheckUserInDB", new StringContent("{}", Encoding.UTF8, "application/json"));
+            var responce2 = await client.PostAsync("User/CheckUserRole", new StringContent("{}", Encoding.UTF8, "application/json"));
+            var responce3 = await client.PostAsync("User/CheckFirstSign", new StringContent("{}", Encoding.UTF8, "application/json"));
+            var responce4 = await client.PostAsync("User/CheckUserIsBlocked", new StringContent($"{User.Login}, {User.Password}", Encoding.UTF8, "application/json"));
+            //Users = await responce.Content.ReadFromJsonAsync<List<User>>();
+            //Roles = await responce2.Content.ReadFromJsonAsync<List<Role>>();
+            //var user = Users.FirstOrDefault(s => s.Login == User.Login && s.Password == User.Password);
+            var answerCheckUserInDB = await responce.Content.ReadFromJsonAsync<bool>();
+            var answerCheckUserRole = await responce2.Content.ReadFromJsonAsync<bool>();
+            var answerCheckFirstSign = await responce3.Content.ReadFromJsonAsync<bool>();
+            var answerCheckUserIsBlocked = await responce4.Content.ReadFromJsonAsync<bool>();
 
-            if (user != null)
+            if (answerCheckUserIsBlocked)
             {
-                if (Roles.FirstOrDefault(s => s.Id == user.RoleId).RoleName == "Пользователь")
+                if (answerCheckUserInDB)
                 {
-                    if (user.FirstSign == false)
+                    if (answerCheckUserRole)
                     {
-                        WindowNew1 window = new WindowNew1();
-                        MessageBox.Show("Вы успешно авторизовались");
-                        Hide();
-                        window.Show();
+                        if (answerCheckFirstSign == false)
+                        {
+                            WindowNew1 window = new WindowNew1(); MessageBox.Show("Вы успешно авторизовались"); Hide(); window.Show();
+                        }
+                        else
+                        {
+                            WindowNew1 window = new WindowNew1(answerCheckFirstSign); MessageBox.Show("Вы успешно авторизовались"); Hide(); window.Show();
+                        }
                     }
                     else
                     {
-                        WindowNew1 window = new WindowNew1(user.FirstSign);
-                        MessageBox.Show("Вы успешно авторизовались");
-                        Hide();
-                        window.Show();
+                        if (answerCheckFirstSign == false)
+                        {
+                            AdminWindow adminWindow = new AdminWindow(); Hide(); adminWindow.Show();
+                        }
+                        else
+                        {
+                            AdminWindow adminWindow = new AdminWindow(answerCheckFirstSign); Hide(); adminWindow.Show();
+                        }
                     }
                 }
-                else
-                {
-                    if (user.FirstSign == false)
-                    {
-                        AdminWindow adminWindow = new AdminWindow();
-                        Hide();
-                        adminWindow.Show();
-                    }
-                    else
-                    {
-                        AdminWindow adminWindow = new AdminWindow(user.FirstSign);
-                        Hide();
-                        adminWindow.Show();
-                    }
-                }
+                else MessageBox.Show("Вы вввели неверный логин или пароль. Пожалуйста проверьте ещё раз введенные данные");
             }
-            else MessageBox.Show("Вы вввели неверный логин или пароль. Пожалуйста проверьте ещё раз введенные данные");
+            else MessageBox.Show("Вы заблокированы. Обратитесь к администратору");
         }
     }
 }

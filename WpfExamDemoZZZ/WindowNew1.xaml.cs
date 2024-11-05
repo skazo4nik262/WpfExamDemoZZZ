@@ -30,5 +30,10 @@ namespace WpfExamDemoZZZ
         {
             this.firstSign = firstSign;
         }
+
+        private void SaveClick(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

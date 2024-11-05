@@ -8,6 +8,22 @@
         mc:Ignorable="d"
         Title="WindowNew1" Height="450" Width="800">
     <StackPanel>
-        
+        <xtd:WindowContainer Visibility="{Binding FirstSignVisibility}">
+            <xtd:ChildWindow CloseButtonVisibility="Collapsed">
+                <StackPanel>
+                    <Label Content="Смените пароль" Margin="0 0 0 20" HorizontalAlignment="Center"/>
+                    <Label Content="Текущий пароль"/>
+                    <TextBox x:Name="currentPassword" Text=""/>
+
+                    <Label Content="Новый пароль"/>
+                    <TextBox x:Name="newPassword" Text=""/>
+
+                    <Label Content="Подтвердите новый пароль"/>
+                    <TextBox x:Name="newNewPassword" Text=""/>
+
+                    <Button Click="SaveClick" Content="Save"/>
+                </StackPanel>
+            </xtd:ChildWindow>
+        </xtd:WindowContainer>
     </StackPanel>
 </Window>
