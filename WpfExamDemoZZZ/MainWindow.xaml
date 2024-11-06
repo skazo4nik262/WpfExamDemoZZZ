@@ -10,7 +10,7 @@
     <StackPanel HorizontalAlignment="Center" Width="250" VerticalAlignment="Center">
         <Label Content="Sign In" HorizontalAlignment="Center"/>
         <Label Content="Login"/>
-        <TextBox Text="{Binding User.Login}"/>
+        <TextBox Text="{Binding User.Login}" />
         <Label Content="Password"/>
         <PasswordBox x:Name="password"/>
         <Button VerticalAlignment="Center" Click="SignInClick" Content="Авторизоваться" Width="100" Margin="0 10 0 0"/>
