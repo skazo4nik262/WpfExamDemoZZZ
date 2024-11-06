@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,13 +23,11 @@ namespace WpfExamDemoZZZ
         public User User { get; set; } = new User();
         public List<User> Users { get; set; } = new List<User>();
         public List<Role> Roles { get; set; } = new List<Role>();
-        public int ErrorCount { get; set; }
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
             client.BaseAddress = new Uri("http://localhost:5185/api/");
-            ErrorCount = 0;
         }
 
         private async void SignInClick(object sender, RoutedEventArgs e)
@@ -40,18 +39,18 @@ namespace WpfExamDemoZZZ
         {
             User.Password = password.Password;
 
-            var responce = await client.PostAsync($"User/CheckUserInDB?login={User.Login}&password={User.Password}", 
-                new StringContent("{}", Encoding.UTF8, "application/json"));
+            //var responce = await client.PostAsync($"User/CheckUserInDB?login={User.Login}&password={User.Password}", new StringContent("{}", Encoding.UTF8, "application/json"));
+            var responce = await client.PostAsync("User/CheckUserInDB", new StringContent(JsonSerializer.Serialize(User), Encoding.UTF8, "application/json"));
             var responce2 = await client.PostAsync("User/CheckUserRole", new StringContent($"{User.Login}, {User.Password}", Encoding.UTF8, "application/json"));
             var responce3 = await client.PostAsync("User/CheckFirstSign", new StringContent($"{User.Login}, {User.Password}", Encoding.UTF8, "application/json"));
-            var responce4 = await client.PostAsync("User/CheckUserIsBlocked", new StringContent($"{User.Login}, {User.Password}", Encoding.UTF8, "application/json"));
+            var responce4 = await client.PostAsync("User/CheckUserIsBlocked", new StringContent($"{User.Login}, {User.Password}, {User.ErrorCount}", Encoding.UTF8, "application/json"));
 
             //Users = await responce.Content.ReadFromJsonAsync<List<User>>();
             //Roles = await responce2.Content.ReadFromJsonAsync<List<Role>>();
             //var user = Users.FirstOrDefault(s => s.Login == User.Login && s.Password == User.Password);
             var shit = await responce.Content.ReadAsStringAsync();
-            var answerCheckUserInDB = await responce.Content.ReadFromJsonAsync<bool>();
 
+            var answerCheckUserInDB = await responce.Content.ReadFromJsonAsync<bool>();
             var answerCheckUserRole = await responce2.Content.ReadFromJsonAsync<bool>();
             var answerCheckFirstSign = await responce3.Content.ReadFromJsonAsync<bool>();
             var answerCheckUserIsBlocked = await responce4.Content.ReadFromJsonAsync<bool>();
@@ -85,7 +84,7 @@ namespace WpfExamDemoZZZ
                         }
                     }
                 }
-                else { MessageBox.Show("Вы вввели неверный логин или пароль. Пожалуйста проверьте ещё раз введенные данные"); ErrorCount++; }
+                else { MessageBox.Show("Вы вввели неверный логин или пароль. Пожалуйста проверьте ещё раз введенные данные"); User.ErrorCount++; }
             }
             else MessageBox.Show("Вы заблокированы. Обратитесь к администратору");
         }

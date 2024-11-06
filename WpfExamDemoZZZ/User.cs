@@ -14,6 +14,8 @@
 
         public DateOnly? LastVisit { get; set; }
 
-        public virtual Role Role { get; set; } = null!;
+        public bool IsBlocked { get; set; }
+
+        public int? ErrorCount { get; set; } = 0;
     }
 }
