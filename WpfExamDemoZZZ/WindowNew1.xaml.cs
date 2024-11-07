@@ -21,14 +21,22 @@ namespace WpfExamDemoZZZ
     {
         private bool firstSign;
 
+        public Visibility FirstSignVisibility { get; set; } = Visibility.Collapsed;
+
         public WindowNew1()
         {
             InitializeComponent();
+            DataContext = this;
+            FirstSignVisibility = Visibility.Collapsed;
         }
 
         public WindowNew1(bool firstSign)
         {
+            DataContext = this;
             this.firstSign = firstSign;
+            if (this.firstSign == true)
+                FirstSignVisibility = Visibility.Visible;
+            InitializeComponent();
         }
 
         private void SaveClick(object sender, RoutedEventArgs e)
