@@ -17,12 +17,13 @@ namespace WpfExamDemoZZZ
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
+    
     public partial class MainWindow : Window
     {
         HttpClient client = new HttpClient();
         public User User { get; set; } = new User();
         public List<User> Users { get; set; } = new List<User>();
-        public List<Role> Roles { get; set; } = new List<Role>();
+        public List<RoleModel> Roles { get; set; } = new List<RoleModel>();
         public MainWindow()
         {
             InitializeComponent();
@@ -40,22 +41,25 @@ namespace WpfExamDemoZZZ
             User.Password = password.Password;
 
             //var responce = await client.PostAsync($"User/CheckUserInDB?login={User.Login}&password={User.Password}", new StringContent("{}", Encoding.UTF8, "application/json"));
-            var responce = await client.PostAsync("User/CheckUserInDB", new StringContent(JsonSerializer.Serialize(User), Encoding.UTF8, "application/json"));
-            var responce2 = await client.PostAsync("User/CheckUserRole", new StringContent($"{User.Login}, {User.Password}", Encoding.UTF8, "application/json"));
-            var responce3 = await client.PostAsync("User/CheckFirstSign", new StringContent($"{User.Login}, {User.Password}", Encoding.UTF8, "application/json"));
-            var responce4 = await client.PostAsync("User/CheckUserIsBlocked", new StringContent($"{User.Login}, {User.Password}, {User.ErrorCount}", Encoding.UTF8, "application/json"));
+            var a = await client.PostAsJsonAsync("User/CheckUserInDB", User);
+            var b = await client.PostAsJsonAsync("User/CheckUserRole", User);
+            var c = await client.PostAsJsonAsync("User/CheckFirstSign", User);
+            var d = await client.PostAsJsonAsync("User/CheckUserIsBlocked", User);
+            //var responce = await client.PostAsync("User/CheckUserInDB", new StringContent(JsonSerializer.Serialize(User), Encoding.UTF8, "application/json"));//partial не виноват
+            //var responce2 = await client.PostAsync("User/CheckUserRole", new StringContent($"{User.Login}, {User.Password}", Encoding.UTF8, "application/json"));
+            //var responce3 = await client.PostAsync("User/CheckFirstSign", new StringContent($"{User.Login}, {User.Password}", Encoding.UTF8, "application/json"));
+            //var responce4 = await client.PostAsync("User/CheckUserIsBlocked", new StringContent($"{User.Login}, {User.Password}, {User.ErrorCount}", Encoding.UTF8, "application/json"));
 
             //Users = await responce.Content.ReadFromJsonAsync<List<User>>();
             //Roles = await responce2.Content.ReadFromJsonAsync<List<Role>>();
             //var user = Users.FirstOrDefault(s => s.Login == User.Login && s.Password == User.Password);
-            var shit = await responce.Content.ReadAsStringAsync();
+            //var shit = await responce.Content.ReadAsStringAsync();
 
-            var answerCheckUserInDB = await responce.Content.ReadFromJsonAsync<bool>();
-            var answerCheckUserRole = await responce2.Content.ReadFromJsonAsync<bool>();
-            var answerCheckFirstSign = await responce3.Content.ReadFromJsonAsync<bool>();
-            var answerCheckUserIsBlocked = await responce4.Content.ReadFromJsonAsync<bool>();
+            var answerCheckUserInDB = await a.Content.ReadFromJsonAsync<bool>();
+            var answerCheckUserRole = await b.Content.ReadFromJsonAsync<bool>();
+            var answerCheckFirstSign = await c.Content.ReadFromJsonAsync<bool>();
+            var answerCheckUserIsBlocked = await d.Content.ReadFromJsonAsync<bool>();
 
-            //var a = await client.GetFromJsonAsync<bool>("User/CheckUserIsBlocked");
 
             if (answerCheckUserIsBlocked)
             {

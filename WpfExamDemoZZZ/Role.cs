@@ -1,12 +1,10 @@
 ﻿namespace WpfExamDemoZZZ
 {
-    public partial class Role
+    public class RoleModel
     {
         public int Id { get; set; }
 
-        public string RoleName { get; set; } = null!;
+        public string RoleName { get; set; } = "";
 
-        public virtual ICollection<User> Users { get; set; } = new List<User>();
     }
-
 }
