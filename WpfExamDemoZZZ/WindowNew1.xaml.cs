@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,23 +23,28 @@ namespace WpfExamDemoZZZ
     public partial class WindowNew1 : Window
     {
         private bool firstSign;
+        private User user;
+        HttpClient client = new HttpClient();
 
         public Visibility FirstSignVisibility { get; set; } = Visibility.Collapsed;
 
-        public WindowNew1()
+        
+
+        public WindowNew1(User user)
         {
-            InitializeComponent();
             DataContext = this;
-            FirstSignVisibility = Visibility.Collapsed;
+            this.user = user;
+            if (user.FirstSign == true)
+                FirstSignVisibility = Visibility.Visible;
+            else FirstSignVisibility = Visibility.Collapsed;
+            client.BaseAddress = new Uri("http://localhost:5185/api/");
+            Method();
+            InitializeComponent();
         }
 
-        public WindowNew1(bool firstSign)
+        public async Task Method()
         {
-            DataContext = this;
-            this.firstSign = firstSign;
-            if (this.firstSign == true)
-                FirstSignVisibility = Visibility.Visible;
-            InitializeComponent();
+            var a = await client.PostAsJsonAsync("User/LastVisitChange", user);
         }
 
         private void SaveClick(object sender, RoutedEventArgs e)

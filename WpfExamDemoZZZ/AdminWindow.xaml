@@ -3,10 +3,151 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xtd="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:WpfExamDemoZZZ"
         mc:Ignorable="d"
         Title="AdminWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <ListView Margin="10" ItemsSource="{Binding Users}">
+            <ListView.Resources>
+                <Style x:Name="huina" TargetType="CheckBox">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="CheckBox">
+                                <ControlTemplate.Resources>
+                                    <SolidColorBrush x:Key="fillBrush">LightBlue</SolidColorBrush>
+                                    <SolidColorBrush x:Key="borderBrush">Gray</SolidColorBrush>
+                                </ControlTemplate.Resources>
+                                <Grid  Background="Transparent" SnapsToDevicePixels="True"
+                   Height="18"  
+                   >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="34" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid  x:Name="markGrid" >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Rectangle Fill="Transparent" Height="16" x:Name="moveEllipse"
+                               >
+                                            <Rectangle.Style>
+                                                <Style TargetType="Rectangle">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                            <DataTrigger.EnterActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation From="0" To="16" Duration="0:0:0.4" 
+                                      Storyboard.TargetProperty="Width" />
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.EnterActions>
+                                                            <DataTrigger.ExitActions>
+                                                                <BeginStoryboard>
+                                                                    <Storyboard>
+                                                                        <DoubleAnimation To="0" Duration="0:0:0.4" 
+                                                 Storyboard.TargetProperty="Width"/>
+                                                                    </Storyboard>
+                                                                </BeginStoryboard>
+                                                            </DataTrigger.ExitActions>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Rectangle.Style>
+                                        </Rectangle>
+                                        <Rectangle RadiusX="6" RadiusY="6" 
+                               Grid.ColumnSpan="2"
+                               Name="line"
+                               StrokeThickness=".8"
+                               IsHitTestVisible="False"
+                               Margin="1,4,1,4"
+                         >
+                                            <Rectangle.Style>
+                                                <Style TargetType="{x:Type Rectangle}">
+                                                    <Setter Property="Fill" Value="LightGray"/>
+                                                </Style>
+                                            </Rectangle.Style>
+                                        </Rectangle>
+                                        <Ellipse Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                             StrokeThickness=".8"
+                             Name="spot"
+                             Grid.Column="1"
+                             HorizontalAlignment="Left"
+                             >
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Fill" Value="LightSteelBlue"/>
+                                                    <Setter Property="Stroke" Value="CadetBlue"/>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+
+                                    </Grid>
+                                    <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="1" ContentStringFormat="{TemplateBinding ContentStringFormat}" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Stroke" TargetName="line" Value="DarkGray"/>
+                                        <Setter Property="Stroke" TargetName="spot" Value="DarkGray"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Opacity"  Value=".5"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Stroke" TargetName="line" Value="Black"/>
+                                        <Setter Property="Stroke" TargetName="spot" Value="Black"/>
+                                    </Trigger>
+                                    <Trigger Property="IsChecked" Value="True">
+                                        <Setter Property="Fill" TargetName="line" Value="LightSkyBlue"/>
+                                        <Setter Property="Fill" TargetName="spot" Value="SkyBlue"/>
+                                        <Setter Property="Stroke" TargetName="spot" Value="SteelBlue"/>
+                                    </Trigger>
+                                    <Trigger Property="IsChecked" Value="{x:Null}">
+                                        <Setter Property="Fill" TargetName="line" Value="lightGray"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                <GridViewColumn Header="Id" DisplayMemberBinding="{Binding Id}"/>
+                    <GridViewColumn Header="Логин" DisplayMemberBinding="{Binding Login}"/>
+                    <GridViewColumn Header="Пароль" DisplayMemberBinding="{Binding Password}"/>
+                    <GridViewColumn Header="Роль" DisplayMemberBinding="{Binding Role.RoleName}"/>
+                    <GridViewColumn Header="Заблокирован" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsEnabled="False" IsChecked="{Binding IsBlocked}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button Margin="10" Content="Add"/>
+        <Button Margin="10" Content="Edit"/>
+        <xtd:WindowContainer>
+            <xtd:ChildWindow CloseButtonVisibility="Collapsed" Visibility="{Binding FirstSignVisibility}">
+                <StackPanel>
+                    <Label Content="Смените пароль" Margin="0 0 0 20" HorizontalAlignment="Center"/>
+                    <Label Content="Текущий пароль"/>
+                    <TextBox x:Name="currentPassword" Text=""/>
+
+                    <Label Content="Новый пароль"/>
+                    <TextBox x:Name="newPassword" Text=""/>
+
+                    <Label Content="Подтвердите новый пароль"/>
+                    <TextBox x:Name="newNewPassword" Text=""/>
+
+                    <Button Click="SaveClick" Content="Save"/>
+                </StackPanel>
+            </xtd:ChildWindow>
+        </xtd:WindowContainer>
+    </StackPanel>
 </Window>

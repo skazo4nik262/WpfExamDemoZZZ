@@ -21,15 +21,18 @@ namespace WpfExamDemoZZZ
     public partial class MainWindow : Window
     {
         HttpClient client = new HttpClient();
-        public User User { get; set; } = new User();
-        public List<User> Users { get; set; } = new List<User>();
-        public List<RoleModel> Roles { get; set; } = new List<RoleModel>();
+        private static MainWindow instance;
+
+        public User User { get; set; }
         public MainWindow()
         {
             InitializeComponent();
             DataContext = this;
             client.BaseAddress = new Uri("http://localhost:5185/api/");
+            User = new User();
         }
+
+        public static MainWindow Instance { get => instance ??= new(); }
 
         private async void SignInClick(object sender, RoutedEventArgs e)
         {
@@ -40,7 +43,7 @@ namespace WpfExamDemoZZZ
         {
             User.Password = password.Password;
 
-
+            var hui = JsonSerializer.Serialize(User);
             var d = await client.PostAsJsonAsync("User/CheckUserIsBlocked", User);
             var answerCheckUserIsBlocked = await d.Content.ReadFromJsonAsync<bool>();
             if (answerCheckUserIsBlocked)
@@ -55,27 +58,15 @@ namespace WpfExamDemoZZZ
                     {
                         var c = await client.PostAsJsonAsync("User/CheckFirstSign", User);
                         var answerCheckFirstSign = await c.Content.ReadFromJsonAsync<bool>();
-                        if (answerCheckFirstSign == false)
-                        {
-                            WindowNew1 window = new WindowNew1(answerCheckFirstSign); MessageBox.Show("Вы успешно авторизовались"); Hide(); window.Show();
-                        }
-                        else
-                        {
-                            WindowNew1 window = new WindowNew1(answerCheckFirstSign); MessageBox.Show("Вы успешно авторизовались"); Hide(); window.Show();
-                        }
+                        User.FirstSign = answerCheckFirstSign;
+                        WindowNew1 window = new WindowNew1(User); MessageBox.Show("Вы успешно авторизовались"); Hide(); window.Show();
                     }
                     else
                     {
                         var c = await client.PostAsJsonAsync("User/CheckFirstSign", User);
                         var answerCheckFirstSign = await c.Content.ReadFromJsonAsync<bool>();
-                        if (answerCheckFirstSign == false)
-                        {
-                            AdminWindow adminWindow = new AdminWindow(); Hide(); adminWindow.Show();
-                        }
-                        else
-                        {
-                            AdminWindow adminWindow = new AdminWindow(answerCheckFirstSign); Hide(); adminWindow.Show();
-                        }
+                        User.FirstSign = answerCheckFirstSign;
+                        AdminWindow adminWindow = new AdminWindow(User); Hide(); adminWindow.Show();
                     }
                 }
                 else
