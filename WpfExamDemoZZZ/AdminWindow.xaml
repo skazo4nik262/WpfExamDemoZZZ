@@ -9,7 +9,7 @@
         Title="AdminWindow" Height="450" Width="800">
 
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <ListView Margin="10" ItemsSource="{Binding Users}">
+        <ListView Margin="10" ItemsSource="{Binding Users}" SelectedItem="{Binding User}">
             <ListView.Resources>
                 <Style x:Name="huina" TargetType="CheckBox">
                     <Setter Property="Template">
@@ -130,20 +130,20 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button Margin="10" Content="Add"/>
-        <Button Margin="10" Content="Edit"/>
+        <Button Margin="10" Content="Add" Click="AddClick"/>
+        <Button Margin="10" Content="Edit" Click="EditClick"/>
         <xtd:WindowContainer>
             <xtd:ChildWindow CloseButtonVisibility="Collapsed" Visibility="{Binding FirstSignVisibility}">
                 <StackPanel>
                     <Label Content="Смените пароль" Margin="0 0 0 20" HorizontalAlignment="Center"/>
                     <Label Content="Текущий пароль"/>
-                    <TextBox x:Name="currentPassword" Text=""/>
+                    <PasswordBox x:Name="currentPassword" />
 
                     <Label Content="Новый пароль"/>
-                    <TextBox x:Name="newPassword" Text=""/>
+                    <PasswordBox x:Name="newPassword"/>
 
                     <Label Content="Подтвердите новый пароль"/>
-                    <TextBox x:Name="newNewPassword" Text=""/>
+                    <PasswordBox x:Name="newNewPassword"/>
 
                     <Button Click="SaveClick" Content="Save"/>
                 </StackPanel>

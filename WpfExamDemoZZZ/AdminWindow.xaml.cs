@@ -25,6 +25,7 @@ namespace WpfExamDemoZZZ
     {
         private bool firstSign;
         private User user;
+        private ChangePasswordModel passwordModel = new();
         HttpClient client = new HttpClient();
         private List<User> users = new();
 
@@ -61,7 +62,22 @@ namespace WpfExamDemoZZZ
             var a = await client.PostAsJsonAsync("User/LastVisitChange", user);
         }
 
-        private void SaveClick(object sender, RoutedEventArgs e)
+        private async void SaveClick(object sender, RoutedEventArgs e)
+        {
+            passwordModel.CurrentPassword = currentPassword.Password;
+            passwordModel.NewPassword = newPassword.Password;
+            passwordModel.NewNewPassword = newNewPassword.Password;
+
+
+            var b = await client.PostAsJsonAsync("User/ChangePassword", passwordModel);
+        }
+
+        private void EditClick(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void AddClick(object sender, RoutedEventArgs e)
         {
 
         }
